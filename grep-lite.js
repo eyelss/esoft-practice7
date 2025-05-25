@@ -10,7 +10,7 @@ const fileName = args['file'];
 const query = args['search'];
 
 if (!fileName || !query) {
-  throw new Error('Маловато аргументов.');
+  throw new Error('Usage: node grep-lite.js --file=<path> --seach=<string>');
 }
 
 fs.readFile(path.join(__dirname, fileName), (err, data) => {
