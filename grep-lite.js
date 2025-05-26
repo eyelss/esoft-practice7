@@ -1,21 +1,28 @@
 const fs = require('fs');
 const path = require('path');
+const { exit } = require('process');
 
 const args = Object.fromEntries(process.argv
   .filter(arg => arg.startsWith('--'))
   .map(arg => arg.slice(2).split('='))
 );
 
-const fileName = args['file'];
+const filePath = path.resolve(args['file']);
 const query = args['search'];
 
-if (!fileName || !query) {
-  throw new Error('Usage: node grep-lite.js --file=<path> --seach=<string>');
+if (!filePath || !query) {
+  console.warn('Usage: node grep-lite.js --file=<path> --seach=<string>');
+  exit(2);
 }
 
-fs.readFile(path.join(__dirname, fileName), (err, data) => {
+if (!fs.existsSync(filePath)) {
+  console.error('File not found');
+  exit(1);
+}
+
+fs.readFile(filePath, (err, data) => {
   if (err) {
-    console.error(err);
+    console.error(err.message);
     return;
   }
 
