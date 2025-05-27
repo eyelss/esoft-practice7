@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 const { exit } = require('process');
 
 const args = Object.fromEntries(process.argv
@@ -20,18 +21,16 @@ if (!fs.existsSync(filePath)) {
   exit(1);
 }
 
-fs.readFile(filePath, (err, data) => {
-  if (err) {
-    console.error(err.message);
-    return;
-  }
+const stream = readline.createInterface({
+  input: fs.createReadStream(filePath),
+  crlfDelay: Infinity,
+});
 
-  data
-    .toString()
-    .split('\n')
-    .forEach((line, idx) => {
-      if (line.includes(query)) {
-        console.log(`[Line ${idx+1}]: ${line}`);
-      }
-    });
+var line_index = 0;
+stream.on('line', (line) => {
+  line_index++
+
+  if (line.includes(query)) {
+    console.log(`[Line ${line_index}] "${line}"`);
+  }
 });
